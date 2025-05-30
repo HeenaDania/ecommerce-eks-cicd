@@ -1,0 +1,54 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: RDS MySQL database for ecommerce app.
+
+Parameters:
+  VpcId:
+    Description: VPC ID from networking stack
+    Type: String
+  PrivateSubnet1:
+    Description: Private subnet 1 ID
+    Type: String
+  PrivateSubnet2:
+    Description: Private subnet 2 ID
+    Type: String
+  DBUsername:
+    Description: Database admin username
+    Type: String
+    Default: admin
+  DBPassword:
+    Description: Database admin password
+    Type: String
+    NoEcho: true
+
+Resources:
+  DBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for RDS MySQL
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 10.0.0.0/16
+
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnet group for RDS MySQL
+      SubnetIds: [!Ref PrivateSubnet1, !Ref PrivateSubnet2]
+
+  MyDB:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceIdentifier: bookstore-db
+      Engine: mysql
+      DBInstanceClass: db.t3.micro
+      MasterUsername: !Ref DBUsername
+      MasterUserPassword: !Ref DBPassword
+      AllocatedStorage: 20
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      VPCSecurityGroups: [!Ref DBSecurityGroup]
+      PubliclyAccessible: false
+      MultiAZ: false
