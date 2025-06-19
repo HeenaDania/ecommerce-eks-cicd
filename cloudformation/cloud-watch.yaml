@@ -1,0 +1,119 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudWatch Monitoring and Alarms for EC2 and RDS with Application Insights
+
+Resources:
+
+  # SNS Topic for notifications
+  AlarmSNSTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: alarm-notifications
+
+  AlarmSNSTopicSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      Protocol: email
+      Endpoint: heena.dania7@gmail.com
+      TopicArn: !Ref AlarmSNSTopic
+
+  # EC2 CPU Utilization Alarm
+  EC2CPUAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: "Alarm if EC2 CPU > 80% for 5 minutes"
+      Namespace: AWS/EC2
+      MetricName: CPUUtilization
+      Dimensions:
+        - Name: InstanceId
+          Value: i-001c92be71ac8793e
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 80
+      ComparisonOperator: GreaterThanThreshold
+      AlarmActions:
+        - !Ref AlarmSNSTopic
+
+  # EC2 Status Check Failed Alarm
+  EC2StatusCheckAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: "Alarm if EC2 instance fails status checks"
+      Namespace: AWS/EC2
+      MetricName: StatusCheckFailed
+      Dimensions:
+        - Name: InstanceId
+          Value: i-001c92be71ac8793e
+      Statistic: Maximum
+      Period: 60
+      EvaluationPeriods: 2
+      Threshold: 1
+      ComparisonOperator: GreaterThanOrEqualToThreshold
+      AlarmActions:
+        - !Ref AlarmSNSTopic
+
+  # RDS CPU Utilization Alarm
+  RDSCPUAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: "Alarm if RDS CPU > 80% for 5 minutes"
+      Namespace: AWS/RDS
+      MetricName: CPUUtilization
+      Dimensions:
+        - Name: DBInstanceIdentifier
+          Value: i-06092ab86209aad98
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 80
+      ComparisonOperator: GreaterThanThreshold
+      AlarmActions:
+        - !Ref AlarmSNSTopic
+
+  # RDS Free Storage Space Alarm
+  RDSFreeStorageAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmDescription: "Alarm if RDS free storage < 2GB"
+      Namespace: AWS/RDS
+      MetricName: FreeStorageSpace
+      Dimensions:
+        - Name: DBInstanceIdentifier
+          Value: i-06092ab86209aad98
+      Statistic: Average
+      Period: 300
+      EvaluationPeriods: 1
+      Threshold: 2147483648  # 2GB in bytes
+      ComparisonOperator: LessThanThreshold
+      AlarmActions:
+        - !Ref AlarmSNSTopic
+
+  # Resource Group for Application Insights
+  AppInsightsResourceGroup:
+    Type: AWS::ResourceGroups::Group
+    Properties:
+      Name: !Sub "AppInsightsResourceGroup-${AWS::StackName}"
+      ResourceQuery:
+        Type: TAG_FILTERS_1_0
+        Query:
+          ResourceTypeFilters:
+            - AWS::AllSupported
+          TagFilters:
+            - Key: Application
+              Values:
+                - !Sub "${AWS::StackName}"
+
+  # Application Insights for holistic app monitoring
+  AppInsights:
+    Type: AWS::ApplicationInsights::Application
+    Properties:
+      ResourceGroupName: !Ref AppInsightsResourceGroup
+      AutoConfigurationEnabled: true
+
+Outputs:
+  AlarmSNSTopicARN:
+    Description: SNS Topic ARN for CloudWatch Alarms
+    Value: !Ref AlarmSNSTopic
+  AppInsightsResourceGroupName:
+    Description: Name of the Resource Group for Application Insights
+    Value: !Ref AppInsightsResourceGroup

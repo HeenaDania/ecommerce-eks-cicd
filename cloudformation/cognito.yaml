@@ -1,6 +1,5 @@
----
 AWSTemplateFormatVersion: '2010-09-09'
-Description: Cognito User Pool and App Client for ecommerce app.
+Description: Cognito User Pool, App Client, and Domain for ecommerce app (ALB compatible).
 
 Resources:
   UserPool:
@@ -22,9 +21,35 @@ Resources:
     Properties:
       ClientName: ecommerce-app-client
       UserPoolId: !Ref UserPool
-      GenerateSecret: false
+      GenerateSecret: true # REQUIRED for ALB as of 2024/2025
+      AllowedOAuthFlows:
+        - code
+      AllowedOAuthScopes:
+        - openid
+      AllowedOAuthFlowsUserPoolClient: true
+      CallbackURLs:
+        - https://heenadania.com/oauth2/idpresponse
+      LogoutURLs:
+        - https://heenadania.com/logout
       SupportedIdentityProviders:
         - COGNITO
       ExplicitAuthFlows:
         - ALLOW_USER_PASSWORD_AUTH
         - ALLOW_REFRESH_TOKEN_AUTH
+
+  UserPoolDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      Domain: heenadania
+      UserPoolId: !Ref UserPool
+
+Outputs:
+  UserPoolId:
+    Description: Cognito User Pool ID
+    Value: !Ref UserPool
+  UserPoolClientId:
+    Description: Cognito User Pool App Client ID
+    Value: !Ref UserPoolClient
+  UserPoolDomain:
+    Description: Cognito Hosted UI Domain
+    Value: !Sub "https://${UserPoolDomain}.auth.${AWS::Region}.amazoncognito.com"

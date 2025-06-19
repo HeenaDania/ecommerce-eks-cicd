@@ -19,6 +19,9 @@ spec:
         - containerPort: 4000
         envFrom:
         - secretRef:
+            name: aws-secret
+        - secretRef:
             name: db-secret
         - configMapRef:
             name: app-config
+        

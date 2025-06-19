@@ -1,0 +1,22 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFront Origin Request Policy to forward Host header
+
+Resources:
+  ForwardHostHeaderPolicy:
+    Type: AWS::CloudFront::OriginRequestPolicy
+    Properties:
+      OriginRequestPolicyConfig:
+        Name: Forward-Host-Header
+        Comment: Forwards Host header to ALB
+        HeadersConfig:
+          HeaderBehavior: whitelist
+          Headers:
+            - Host
+        CookiesConfig:
+          CookieBehavior: none
+        QueryStringsConfig:
+          QueryStringBehavior: all
+
+Outputs:
+  OriginRequestPolicyId:
+    Value: !Ref ForwardHostHeaderPolicy

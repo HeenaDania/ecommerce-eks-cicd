@@ -1,0 +1,28 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: ecommerce-eks
+  region: us-east-1
+
+vpc:
+  id: vpc-038c939b5ae2926df
+  securityGroup: sg-064638a2553b210cf
+  subnets:
+    public:
+      us-east-1a:
+        id: subnet-0453f0fbdab9f7fdb
+      us-east-1b:
+        id: subnet-024222f78720df3be
+
+managedNodeGroups:
+  - name: public-ng
+    instanceType: t3.medium
+    desiredCapacity: 2
+    minSize: 1
+    maxSize: 3
+    subnets:
+      - subnet-0453f0fbdab9f7fdb
+      - subnet-024222f78720df3be
+    ssh:
+      enableSsm: true

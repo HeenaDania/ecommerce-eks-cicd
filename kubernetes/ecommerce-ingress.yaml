@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ecommerce-ingress
+  namespace: bookstore
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:607735330434:certificate/88d33cd7-3b7c-42ee-8a16-4ccd75d59806
+    alb.ingress.kubernetes.io/auth-type: cognito
+    alb.ingress.kubernetes.io/auth-idp-cognito: '{"UserPoolArn":"arn:aws:cognito-idp:us-east-1:607735330434:userpool/us-east-1_qmeDi73fp","UserPoolClientId":"5sjubsad7j4qq7pdraotbn0lds","UserPoolDomain":"heenadania.auth.us-east-1.amazoncognito.com"}'
+    alb.ingress.kubernetes.io/auth-on-unauthenticated-request: authenticate
+    alb.ingress.kubernetes.io/auth-scope: openid
+spec:
+  ingressClassName: alb
+  rules:
+    - host: heenadania.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend
+                port:
+                  number: 80
+          - path: /books
+            pathType: Prefix
+            backend:
+              service:
+                name: backend
+                port:
+                  number: 80

@@ -6,6 +6,11 @@ const path = require('path');
 const app = express();
 app.use(express.json());
 
+//Health check route
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
 // Log environment variables for debugging
 console.log('DB_HOST:', process.env.DB_HOST);
 console.log('DB_NAME:', process.env.DB_NAME);
