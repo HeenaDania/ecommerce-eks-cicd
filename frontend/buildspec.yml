@@ -8,7 +8,7 @@ env:
 phases:
   pre_build:
     commands:
-      -cd frontend
+      - cd frontend
       - echo Logging in to Amazon ECR...
       - aws --version
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 607735330434.dkr.ecr.us-east-1.amazonaws.com
@@ -17,14 +17,14 @@ phases:
       - IMAGE_TAG=$COMMIT_HASH
   build:
     commands:
-      -cd frontend
+      - cd frontend
       - echo Build started on `date`
       - echo Building the Docker image...
       - docker build -t $REPOSITORY_URI:latest .
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:
-      -cd frontend
+      - cd frontend
       - echo Build completed on `date`
       - echo Pushing the Docker images...
       - docker push $REPOSITORY_URI:latest
