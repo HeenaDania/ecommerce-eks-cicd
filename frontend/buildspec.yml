@@ -11,6 +11,7 @@ env:
 phases:
   pre_build:
     commands:
+      - kubectl version --output=yaml
       - echo Logging in to DockerHub...
       - echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
       - echo Logging in to Amazon ECR...
