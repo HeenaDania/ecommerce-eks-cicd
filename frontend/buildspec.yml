@@ -11,7 +11,12 @@ env:
 phases:
   pre_build:
     commands:
+      - echo Updating kubeconfig...
+      - aws eks update-kubeconfig --region us-east-1 --name ecommerce-eks
       - kubectl version --output=yaml
+      - kubectl config get-contexts
+      - kubectl config current-context
+      - kubectl get nodes
       - echo Logging in to DockerHub...
       - echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
       - echo Logging in to Amazon ECR...
