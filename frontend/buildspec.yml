@@ -4,6 +4,9 @@ env:
   variables:
     IMAGE_REPO_NAME: ecommerce-frontend
     IMAGE_TAG: latest
+  secrets-manager:
+    DOCKERHUB_USERNAME: DockerhubCredentials:DOCKERHUB_USERNAME
+    DOCKERHUB_PASSWORD: DockerhubCredentials:DOCKERHUB_PASSWORD
 
 phases:
   pre_build:
