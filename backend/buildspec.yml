@@ -3,37 +3,41 @@ version: 0.2
 env:
   variables:
     IMAGE_REPO_NAME: ecommerce-backend
-    IMAGE_TAG: latest
   secrets-manager:
     DOCKERHUB_USERNAME: DockerhubCredentials:DOCKERHUB_USERNAME
     DOCKERHUB_PASSWORD: DockerhubCredentials:DOCKERHUB_PASSWORD
 
 phases:
+  install:
+    commands:
+      - pip install --upgrade awscli
+      - curl -LO "https://dl.k8s.io/release/v1.32.0/bin/linux/amd64/kubectl"
+      - chmod +x kubectl
+      - mv kubectl /usr/local/bin/
+      - aws --version
+      - kubectl version --client
   pre_build:
     commands:
-      - echo Logging in to DockerHub...
+      - export IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
-      - echo Logging in to Amazon ECR...
-      - aws --version
       - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 607735330434.dkr.ecr.us-east-1.amazonaws.com
-      - REPOSITORY_URI=607735330434.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_REPO_NAME
-      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - IMAGE_TAG=$COMMIT_HASH
+      - aws eks update-kubeconfig --region us-east-1 --name ecommerce-eks
+      - aws sts get-caller-identity
+      - kubectl config current-context
+      - kubectl version --output=yaml
+      - kubectl get nodes
   build:
     commands:
       - echo Build started on `date`
-      - echo Building the Docker image...
-      - docker build -t $REPOSITORY_URI:latest -f backend/Dockerfile backend
-      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+      - docker build -t 607735330434.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_REPO_NAME:latest -f backend/Dockerfile backend
+      - docker tag 607735330434.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_REPO_NAME:latest 607735330434.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
   post_build:
     commands:
       - echo Build completed on `date`
-      - echo Pushing the Docker images...
-      - docker push $REPOSITORY_URI:latest
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - docker push 607735330434.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_REPO_NAME:latest
+      - docker push 607735330434.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG
       - echo Updating EKS deployment...
-      - aws eks update-kubeconfig --region us-east-1 --name ecommerce-eks
-      - aws sts get-caller-identity
-      - kubectl set image deployment/backend backend=$REPOSITORY_URI:$IMAGE_TAG -n bookstore
+      - kubectl set image deployment/backend backend=607735330434.dkr.ecr.us-east-1.amazonaws.com/$IMAGE_REPO_NAME:$IMAGE_TAG -n bookstore
+
 artifacts:
   files: '**/*'
