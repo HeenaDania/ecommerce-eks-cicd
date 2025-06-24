@@ -11,19 +11,6 @@ env:
 phases:
   pre_build:
     commands:
-      - pip install --upgrade awscli
-      - aws --version
-      - aws eks get-token --cluster-name ecommerce-eks --region us-east-1
-      - aws sts get-caller-identity
-      - echo "Cleaning up old kubeconfig..."
-      - rm -f /root/.kube/config
-      - echo Updating kubeconfig...
-      - aws eks update-kubeconfig --region us-east-1 --name ecommerce-eks
-      - kubectl config view
-      - kubectl config get-contexts
-      - kubectl config current-context
-      - kubectl version --output=yaml
-      - kubectl get nodes
       - echo Logging in to DockerHub...
       - echo "$DOCKERHUB_PASSWORD" | docker login --username "$DOCKERHUB_USERNAME" --password-stdin
       - echo Logging in to Amazon ECR...
