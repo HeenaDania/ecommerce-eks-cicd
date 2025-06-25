@@ -293,3 +293,56 @@ body {
 .book-page-btn:hover {
   background: #008080;
 }
+.books-carousel {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding: 1rem;
+  margin: 2rem 0;
+  scrollbar-width: thin;
+  scrollbar-color: #33b7b7 #f7fafc;
+}
+
+.books-carousel::-webkit-scrollbar {
+  height: 8px;
+}
+
+.books-carousel::-webkit-scrollbar-track {
+  background: #f7fafc;
+  border-radius: 4px;
+}
+
+.books-carousel::-webkit-scrollbar-thumb {
+  background-color: #33b7b7;
+  border-radius: 4px;
+}
+
+.book-carousel-item {
+  flex: 0 0 auto;
+  width: 150px;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.book-carousel-item:hover {
+  transform: scale(1.05);
+}
+
+.book-carousel-image {
+  width: 120px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px #0002;
+}
+
+.book-carousel-title {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

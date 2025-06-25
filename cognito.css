@@ -1,0 +1,12 @@
+body {
+  background: #ffe082;
+  font-family: 'Poppins', Arial, sans-serif;
+}
+.label, .inputField, .button {
+  border-radius: 5px !important;
+}
+.button {
+  background: #33b7b7 !important;
+  color: #fff !important;
+  font-weight: bold;
+}

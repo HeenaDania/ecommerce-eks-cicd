@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../contexts/AuthContext";
-import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import "../App.css";
 
@@ -29,7 +28,20 @@ function HomePage() {
         <p>Discover your next great read!</p>
         {user && <p>Hello, {user.attributes?.email}</p>}
       </div>
-      <div className="book-list">
+      <div className="books-carousel">
+        {books.map((book) => (
+          <div key={book.id} className="book-carousel-item">
+            <img
+              src={book.imageUrl}
+              alt={book.title}
+              className="book-carousel-image"
+            />
+            <div className="book-carousel-title">{book.title}</div>
+          </div>
+        ))}
+      </div>
+      {/* If you want the grid view as well, uncomment below */}
+      {/* <div className="book-list">
         {books.map((book) => (
           <div className="book-card" key={book.id}>
             <img src={book.imageUrl} alt={book.title} className="book-image" />
@@ -41,7 +53,7 @@ function HomePage() {
             </Link>
           </div>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }
