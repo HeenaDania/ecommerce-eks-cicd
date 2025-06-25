@@ -1,6 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import React, { useEffect, useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import { Link } from "react-router-dom";
+import Navbar from "../components/Navbar";
+import "../App.css";
 
 function HomePage() {
   const { user } = useAuth();
@@ -13,7 +15,7 @@ function HomePage() {
         const data = await response.json();
         setBooks(data);
       } catch (error) {
-        console.error('Error fetching books:', error);
+        console.error("Error fetching books:", error);
       }
     };
     fetchBooks();
@@ -21,23 +23,25 @@ function HomePage() {
 
   return (
     <div>
-      <h1>Welcome to Our Book Store</h1>
-      {user && <p>Hello, {user.attributes?.email}</p>}
-      <h2>Featured Books</h2>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px' }}>
+      <Navbar />
+      <div className="hero-section">
+        <h1>Welcome to Our Book Store</h1>
+        <p>Discover your next great read!</p>
+        {user && <p>Hello, {user.attributes?.email}</p>}
+      </div>
+      <div className="book-list">
         {books.map((book) => (
-          <div key={book.id} style={{ border: '1px solid #ccc', padding: '16px', borderRadius: '8px', maxWidth: '300px' }}>
-            <img src={book.imageUrl} alt={book.title} style={{ width: '100%', height: 'auto' }} />
-            <h3>{book.title}</h3>
-            <p>by {book.author}</p>
-            <p>${book.price}</p>
-            <Link to={`/book/${book.id}`}>View Details</Link>
+          <div className="book-card" key={book.id}>
+            <img src={book.imageUrl} alt={book.title} className="book-image" />
+            <h3 className="book-title">{book.title}</h3>
+            <p className="book-author">by {book.author}</p>
+            <p className="book-price">${book.price}</p>
+            <Link to={`/book/${book.id}`} className="add-cart-btn">
+              View Details
+            </Link>
           </div>
         ))}
       </div>
-      <nav style={{ marginTop: '24px' }}>
-        <Link to="/cart">View Cart</Link>
-      </nav>
     </div>
   );
 }

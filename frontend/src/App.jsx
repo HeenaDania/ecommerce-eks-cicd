@@ -1,8 +1,8 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
-import HomePage from './pages/HomePage';
-import BookPage from './pages/BookPage';
-import CartPage from './pages/CartPage';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { AuthProvider } from "./contexts/AuthContext";
+import HomePage from "./pages/HomePage";
+import BookPage from "./pages/BookPage";
+import CartPage from "./pages/CartPage";
 
 function App() {
   return (
