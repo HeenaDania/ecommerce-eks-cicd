@@ -1,12 +1,12 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { signIn, getCurrentUser, signOut as amplifySignOut } from "aws-amplify/auth";
+import { getCurrentUser, signOut as amplifySignOut } from "aws-amplify/auth";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
 
-  // Check for current user on initial load
+  // Check for current user on initial load and after redirect
   useEffect(() => {
     const checkCurrentUser = async () => {
       try {
@@ -20,18 +20,6 @@ export function AuthProvider({ children }) {
     checkCurrentUser();
   }, []);
 
-  const handleSignIn = async (email, password) => {
-    try {
-      await signIn({ username: email, password });
-      const currentUser = await getCurrentUser();
-      setUser(currentUser);
-      return true;
-    } catch (error) {
-      console.error('Login error:', error);
-      return false;
-    }
-  };
-
   const handleSignOut = async () => {
     try {
       await amplifySignOut();
@@ -42,7 +30,7 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, signIn: handleSignIn, signOut: handleSignOut }}>
+    <AuthContext.Provider value={{ user, signOut: handleSignOut }}>
       {children}
     </AuthContext.Provider>
   );

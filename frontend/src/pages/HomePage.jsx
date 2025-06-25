@@ -5,6 +5,7 @@ import "../App.css";
 
 function HomePage() {
   const { user } = useAuth();
+  console.log("User:", user);
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
