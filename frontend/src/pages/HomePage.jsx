@@ -5,13 +5,13 @@ import "../App.css";
 
 function HomePage() {
   const { user } = useAuth();
-  console.log("User:", user);
   const [books, setBooks] = useState([]);
 
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/books`);
+        // Directly specify your API URL here:
+        const response = await fetch("https://heenadania.com/books");
         const data = await response.json();
         setBooks(data);
       } catch (error) {

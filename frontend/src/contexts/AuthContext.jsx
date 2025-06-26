@@ -8,7 +8,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState({
     username: "testuser",
     attributes: {
-      email: "testuser@example.com"
+      email: "Heena"
     }
   });
 
