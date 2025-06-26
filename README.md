@@ -30,6 +30,23 @@ This project demonstrates how to build, containerize, and deploy a scalable e-co
 
 * Monitoring and alerting with CloudWatch and SNS
 
+⚡ Workflow
+
+* Code is pushed to GitHub.
+
+* CodePipeline detects changes and starts the pipeline.
+
+* CodeBuild installs dependencies, builds the app, and creates Docker images.
+
+* Docker images are pushed to Amazon ECR.
+
+* Kubernetes manifests are applied to EKS, updating the application.
+
+* ALB routes incoming traffic to the correct service in EKS.
+
+* CloudWatch and SNS handle monitoring and notifications.
+
+
 🙋‍♀️ Author - Heena
 
 Feel free to fork, contribute, or reach out for questions!
