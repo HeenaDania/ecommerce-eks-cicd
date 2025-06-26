@@ -1,19 +1,25 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { getCurrentUser, signOut as amplifySignOut } from "aws-amplify/auth";
+// import { getCurrentUser, signOut as amplifySignOut } from "aws-amplify/auth"; // You can comment this out for now
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+  // HARDCODED USER for UI testing
+  const [user, setUser] = useState({
+    username: "testuser",
+    attributes: {
+      email: "testuser@example.com"
+    }
+  });
 
-  // Check for current user on initial load and after redirect
+  // Comment out the useEffect and sign out logic for now
+  /*
   useEffect(() => {
     const checkCurrentUser = async () => {
       try {
         const currentUser = await getCurrentUser();
         setUser(currentUser);
       } catch (error) {
-        // User is not signed in
         setUser(null);
       }
     };
@@ -28,6 +34,10 @@ export function AuthProvider({ children }) {
       console.error('Sign out error:', error);
     }
   };
+  */
+
+  // Simple sign out to clear the user
+  const handleSignOut = () => setUser(null);
 
   return (
     <AuthContext.Provider value={{ user, signOut: handleSignOut }}>
